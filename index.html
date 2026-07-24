@@ -85,7 +85,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;tou
   background:rgba(246,240,226,.12);border:2px solid rgba(246,240,226,.25);font-size:clamp(15px,3.8vw,20px);
   font-family:'Baloo 2',system-ui,sans-serif;font-weight:700;max-width:100%;text-align:left}
 .speak:active{transform:scale(.96)}
-.stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:10px 0}
+.stage{flex:0 0 auto;margin-top:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:10px 0}
 .objs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:100%}
 .obj{width:clamp(44px,12vw,72px);height:clamp(44px,12vw,72px);border-radius:18px;display:flex;align-items:center;
   justify-content:center;font-size:clamp(24px,7vw,38px);background:rgba(255,255,255,.12);
@@ -117,7 +117,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;tou
 .coin:active{transform:scale(.9)}
 .coin.used{opacity:.5}
 
-.answers{display:grid;gap:12px;margin-top:18px}
+.answers{display:grid;gap:12px;margin-top:18px;margin-bottom:auto}
 .ans{border-radius:26px;min-height:clamp(70px,17vw,100px);display:flex;align-items:center;justify-content:center;
   background:rgba(246,240,226,.14);border:3px solid rgba(246,240,226,.3);box-shadow:0 5px 0 rgba(0,0,0,.25);
   font-size:clamp(30px,9vw,48px);font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;padding:6px}
@@ -192,8 +192,8 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;tou
   }
   .play>.top{grid-area:top}
   .play>.speak{grid-area:speak;justify-self:center}
-  .play>.stage{grid-area:stage;min-height:auto;align-self:center}
-  .play>.answers{grid-area:answers;align-self:center;margin-top:0}
+  .play>.stage{grid-area:stage;min-height:auto;align-self:center;margin-top:0}
+  .play>.answers{grid-area:answers;align-self:center;margin-top:0;margin-bottom:0}
 }
 </style>
 </head>
@@ -748,9 +748,22 @@ if("serviceWorker" in navigator){
   });
 }
 
+/* ===== tilbake-knapp: gå hjem / lukk dialog i stedet for å avslutte ===== */
+function armBack(){try{history.pushState(null,"",location.href);}catch(e){}}
+window.addEventListener("popstate",function(){
+  var m=document.querySelector(".modal");
+  if(m){m.remove();armBack();return;}           // lukk åpen dialog
+  if(G.screen!=="hjem"){                          // gå tilbake til hjem
+    try{window.speechSynthesis.cancel();}catch(e){}
+    G.screen="hjem";render();armBack();return;
+  }
+  history.back();                                 // allerede hjemme → la appen lukkes
+});
+
 /* ===== start ===== */
 S=load();
 render();
+armBack();
 </script>
 </body>
 </html>
